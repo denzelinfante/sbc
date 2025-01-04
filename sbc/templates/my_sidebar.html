@@ -1,0 +1,42 @@
+{% load static %}
+
+<div class="sidebar">
+    <img src="{% static 'shoebros-removebg-preview.png' %}" alt="Logo" width="100" height="100">
+    <p class="text-center">ADMIN</p>
+    <a href="{% url 'adminAccounts' %}">ACCOUNTS</a>
+    <a href="{% url 'adminPurchaseOrder' %}">PURCHASE ORDER</a>
+    <a href="{% url 'adminRequisitionProduct' %}">REQUISITION</a>
+    <a href="{% url 'adminProductListing' %}">PRODUCT LISTING</a>
+    <a href="{% url 'login' %}" class="logout">LOGOUT</a>
+</div>
+
+<style>
+    .sidebar {
+        background-color: #696969;
+        height: 100vh;
+        width: 250px;
+        position: fixed;
+        left: 0;
+        top: 0;
+        color: white;
+        padding: 10px;
+    }
+    .sidebar img {
+        display: block;
+        margin: 10px auto;
+    }
+    .sidebar a {
+        color: #fff;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        font-weight: bold;
+        border-top: 1px solid #ccc;
+    }
+    .sidebar a:hover {
+        color: #ccc;
+    }
+    .logout {
+        text-align: center;
+    }
+</style>

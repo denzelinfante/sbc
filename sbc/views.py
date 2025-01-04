@@ -32,35 +32,15 @@ def admin_accounts(request):
             user_to_delete.user.delete()  # This deletes both the SBC profile and the associated User
             return redirect('adminAccounts')
     return render(request, 'adminAccounts.html', {'users': users})
-    pass
 
-def update_account(request, user_id):
-    user_profile = get_object_or_404(SBC, id=user_id)
-    if request.method == 'POST':
-        user_profile.firstname = request.POST.get('firstname')
-        user_profile.lastname = request.POST.get('lastname')
-        user_profile.role = request.POST.get('role')
-        user_profile.is_active = request.POST.get('is_active') == 'on'
-        user_profile.save()
-        user_profile.user.email = request.POST.get('email')
-        user_profile.user.username = request.POST.get('username')
-        user_profile.user.save()
-        return redirect('adminAccounts')
-    return render(request, 'updateAccount.html', {'user_profile': user_profile})
-
-def delete_account(request, user_id):
-    try:
-        user_profile = get_object_or_404(SBC, id=user_id)
-        user_profile.user.delete()  # This deletes both the SBC profile and the associated User
-        messages.success(request, "Account deleted successfully.")
-    except SBC.DoesNotExist:
-        messages.error(request, "Account not found.")
-    return redirect('adminAccounts')
 
 def adminCreateAccount_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        email = request.POST.get('email')
+        firstname = request.POST.get('firstname')
+        lastname = request.POST.get('lastname')
         role = request.POST.get('role')
         
         if User.objects.filter(username=username).exists():
@@ -69,17 +49,21 @@ def adminCreateAccount_view(request):
         
         user = User.objects.create(
             username=username,
-            password=make_password(password)
+            password=make_password(password),
+            email=email,
+            first_name=firstname,
+            last_name=lastname
         )
         
         SBC.objects.create(
             user=user,
-            role=role
+            role=role,
+            firstname=firstname,
+            lastname=lastname
         )
         
         messages.success(request, 'Account created successfully.')
         
-        # Role-based redirection
         if role == 'inventory':
             return redirect('inventoryDashboard')
         elif role == 'purchasing':
@@ -89,39 +73,17 @@ def adminCreateAccount_view(request):
         
     return render(request, 'adminCreateAccount.html')
 
-def create_account(request):
-    # Your logic for creating an account goes here
-    return HttpResponse("Account creation page")
+def admin_purchase_order(request):
+    return render(request, 'adminPurchaseOrder.html')
+
+def admin_requisition_product(request):
+    return render(request, 'adminRequisitionProduct.html')
+
+def admin_product_listing(request):
+    return render(request, 'adminProductListing.html')
 
 
 def logout_view(request):
     logout(request)
     return redirect('login') 
-
-@login_required
-def adminPurchaseOrder_view(request):
-    return render(request, 'adminPurchaseOrder.html')
-
-@login_required
-def adminRequisitionProduct_view(request):
-    return render(request, 'adminRequisitionProduct.html')
-
-@login_required
-def adminProductListing_view(request):
-    return render(request, 'adminProductListing.html')
-
-def adminCreateAccount_view(request):
-    return render(request, 'adminCreateAccount.html')
-
-@login_required
-def inventory_dashboard(request):
-    return render(request, 'inventoryDashboard.html')
-
-@login_required
-def purchasing_dashboard(request):
-    return render(request, 'purchasingDashboard.html')
-
-@login_required
-def admin_dashboard(request):
-    return render(request, 'adminDashboard.html')
 

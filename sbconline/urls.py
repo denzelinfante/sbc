@@ -7,4 +7,4 @@ urlpatterns = [
     path('sbc/', include('sbc.urls')),  # Includes the SBC app's URLs
     path('', lambda request: redirect('login')),  # Redirect root URL to 'login' view
 ]
-    
+

@@ -15,45 +15,6 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Sidebar */
-        .sidebar {
-            background-color: #696969;
-            height: 100vh;
-            padding: 10px;
-            width: 250px;
-            position: fixed;
-            left: 0;
-            top: 0;
-            color: white;
-        }
-
-        .sidebar img {
-            display: block;
-            margin: 10px auto;
-        }
-
-        .sidebar a {
-            color: #fff;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-            font-weight: bold;
-            border-top: 1px solid #ccc;
-        }
-
-        .sidebar a:hover {
-            color: #ccc;
-        }
-
-        .sidebar a.active {
-            color: #000;
-            
-        }
-
-        .logout {
-            text-align: center;
-        }
-
         /* Main Content */
         .content {
             margin-left: 250px;
@@ -112,30 +73,21 @@
         }
 
         .approved {
-            background-color: #28a745; /* Green */
+            background-color: #28a745;
             color: #fff;
         }
 
         .pending {
-            background-color: #ffc107; /* Yellow */
+            background-color: #ffc107;
             color: #000;
         }
 
         .rejected {
-            background-color: #dc3545; /* Red */
+            background-color: #dc3545;
             color: #fff;
         }
 
         /* Action Buttons */
-        /* .action-buttons {
-            display: flex;
-            /* justify-content: center;
-            gap: 10px; */
-
-         /*   justify-content: flex-end;
-            margin-top: 20px;
-        } */
-
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -152,11 +104,6 @@
             font-weight: bold;
         }
 
-            /* Buttons */
-            .btn {
-            font-weight: bold;
-            border-radius: 20px;
-        }
         .btn-primary {
             background-color: #FFFFFF;
             border: none;
@@ -174,20 +121,11 @@
             background-color: #FFFFFF;
             color: #000;
         }
-
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <img src="{% static 'shoebros-removebg-preview.png' %}" alt="Logo" width="100" height="100">
-        <p class="text-center">ADMIN</p>
-        <a href="{% url 'adminAccounts' %}">ACCOUNTS</a>
-        <a href="{% url 'adminPurchaseOrder' %}">PURCHASE ORDER</a>
-        <a class="active" href="{% url 'adminRequisitionProduct' %}">REQUISITION</a>
-        <a href="{% url 'adminProductListing' %}">PRODUCT LISTING</a>
-        <a href="{% url 'login' %}" class="logout">LOGOUT</a>
-    </div>
+    <!-- Sidebar Include -->
+    {% include 'my_sidebar.html' %}
 
     <!-- Main Content -->
     <div class="content">
@@ -201,7 +139,7 @@
         </div>
 
         <!-- Filter Section -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <label for="datePicker" class="text-white">📅 Date:</label>
                 <input type="date" id="datePicker" class="form-control" style="display: inline-block; width: auto;">
@@ -215,8 +153,7 @@
                     <option value="rejected">Rejected</option>
                 </select>
             </div>
-            <!-- <button class="btn btn-primary">Filter</button> -->
-        </div>
+        </div> -->
 
         <!-- Table -->
         <table class="table">
@@ -259,3 +196,4 @@
     </div>
 </body>
 </html>
+
