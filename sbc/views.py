@@ -8,21 +8,46 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
+from django.contrib.auth import get_user_model
 
 
 def my_login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        
         user = authenticate(request, username=username, password=password)
+        
         if user is not None:
             login(request, user)
-            return redirect('adminAccounts')  # Redirect to admin accounts page
-        else:
-            messages.error(request, 'Invalid username or password.')
-    
-    return render(request, 'my_login.html')
+            
+            # Check the user's role
+            try:
+                sbc_user = SBC.objects.get(user=user)
+                role = sbc_user.role
 
+                # Redirect based on role
+                if role == 'inventory':
+                    return redirect('inventoryStocks')  # Inventory dashboard
+                elif role == 'purchasing':
+                    return redirect('purchasingStatus')  # Purchasing dashboard
+                elif role == 'admin':
+                    return redirect('adminAccounts')  # Admin dashboard
+                else:
+                    messages.error(request, "Role not recognized.")
+                    return redirect('login')  # Default case if role isn't recognized
+            except SBC.DoesNotExist:
+                logout(request)
+                messages.error(request, "User account setup incomplete.")
+                return redirect('login')
+                
+        else:
+            # Handle invalid credentials
+            messages.error(request, "Invalid username or password.")
+            return redirect('login')
+
+    return render(request, 'my_login.html')
+    
 def admin_accounts(request):
     users = SBC.objects.all()
     if request.method == "POST":
@@ -43,11 +68,13 @@ def adminCreateAccount_view(request):
         lastname = request.POST.get('lastname')
         role = request.POST.get('role')
         
-        if User.objects.filter(username=username).exists():
+        # Check if the username already exists
+        if get_user_model().objects.filter(username=username).exists():
             messages.error(request, 'Username already exists.')
             return render(request, 'adminCreateAccount.html')
         
-        user = User.objects.create(
+        # Create the user
+        user = get_user_model().objects.create(
             username=username,
             password=make_password(password),
             email=email,
@@ -55,15 +82,18 @@ def adminCreateAccount_view(request):
             last_name=lastname
         )
         
-        SBC.objects.create(
+        # Create SBC instance for role
+        sbc = SBC.objects.create(
             user=user,
             role=role,
             firstname=firstname,
             lastname=lastname
         )
         
+        # Success message
         messages.success(request, 'Account created successfully.')
         
+        # Redirect based on role
         if role == 'inventory':
             return redirect('inventoryDashboard')
         elif role == 'purchasing':
@@ -81,6 +111,13 @@ def admin_requisition_product(request):
 
 def admin_product_listing(request):
     return render(request, 'adminProductListing.html')
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+#                                         inventory
+def inventoryStocks_view(request):
+    return render(request, 'inventory/inventoryStocks.html')
+
 
 
 def logout_view(request):
